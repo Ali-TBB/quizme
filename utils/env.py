@@ -23,6 +23,15 @@ class Env:
         return "\\".join(os.path.dirname(__file__).split("\\")[0:-1])
 
     @staticmethod
+    def init():
+        env_path = find_dotenv()
+        if not env_path:
+            with open(os.path.join(Env.base_path, ".env"), "w") as f:
+                pass
+            env_path = find_dotenv()
+        load_dotenv()
+
+    @staticmethod
     def get(key) -> str:
         return os.environ.get(key)
 
