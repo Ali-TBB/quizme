@@ -3,6 +3,19 @@ from dotenv import load_dotenv, set_key, find_dotenv
 
 
 class Env:
+    """
+    A utility class for managing environment variables.
+
+    Methods:
+    - get(key): Retrieves the value of the specified environment variable.
+    - set(key, value): Sets the value of the specified environment variable.
+    - unset(key): Removes the specified environment variable.
+    - has(key): Checks if the specified environment variable exists.
+    
+    Properties:
+    - base_path: Returns the base path of the current file.
+    - all: Returns a dictionary containing all environment variables.
+    """
 
     @classmethod
     @property
