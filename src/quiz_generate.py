@@ -41,7 +41,7 @@ class QuizGenerate(BaseModel):
             topic_info = "Topic: Depend on the file"
 
         if self.attachments:
-            attachment_info = f"\nAttachments: {', '.join(self.attachments)}"
+            attachment_info = f"\nAttachments: {', '.join([self.attachments[i].path for i in range(len(self.attachments))])}"
         else:
             attachment_info = ""
 

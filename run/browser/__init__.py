@@ -5,16 +5,18 @@ import os
 
 
 import utils
+from models.attachment import Attachment
 from models.answer import Answer
 from models.quizzes import Quizzes
 from src.correction import Correction
-from src.quiz_generate import QuizGenerate  # Import your QuizGenerate class
+from src.quiz_generate import QuizGenerate
+from utils.env import Env  
 
 app = Flask(__name__)
 
 # Configure the upload folder and allowed file types
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx'}
+UPLOAD_FOLDER = 'run/browser/uploads'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'docx', 'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_TYPES = {'true/false', 'multiple-choice one-answer', 'multiple-choice multiple-answers', 'mixed'}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -57,9 +59,13 @@ def generate_quiz():
         if allowed_file(file.filename):
             # Save the uploaded file
             filename = secure_filename(file.filename)
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file_path = os.path.join(Env.base_path, UPLOAD_FOLDER, filename)
             file.save(file_path)
-            attachments.append(file_path)  # Add the file path to attachments
+            attachments.append(Attachment.create(
+                id=None,
+                mime_type=file.content_type,
+                path=file_path
+            ))  # Add the file path to attachments
         else:
             return jsonify({"error": "Invalid file type."}), 400
 
@@ -146,8 +152,7 @@ def check_answers(quiz_id):
 
     # Fetch the user's answers
     user_answers = request.form.get('answers')
-    
-    print(request.form, user_answers)
+
     user_answers = json.loads(user_answers) if user_answers else None
 
     if user_answers is None:

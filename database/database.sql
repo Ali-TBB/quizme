@@ -27,12 +27,10 @@ CREATE TABLE IF NOT EXISTS `quizzes` (
 
 CREATE TABLE IF NOT EXISTS `attachments` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `quiz_id` INT NOT NULL,
   `mime_type` VARCHAR(255) NOT NULL,
   `path` VARCHAR(255) NOT NULL,
   `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
-  FOREIGN KEY (`quiz_id`) REFERENCES quizzes(`id`) ON DELETE CASCADE
+  `updated_at` TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `questions` (
