@@ -50,13 +50,11 @@ class QuizGenerate(BaseModel):
             f"- {topic_info}\n"
             f"- Difficulty Level: {self.difficulty}\n"
             f"- Number of Questions: {self.number_of_questions}\n"
-            f"- Question Type: {self.question_type}"
+            f"- Question Type: {self.question_type}{attachment_info}\n"
             f"The quiz should include a variety of questions that align with the specified difficulty level."
-            f"{attachment_info}"
         )
 
-        
-    def save_quiz_to_db(self, quiz_data: str, quiz_id: int):
+    def save_quiz_to_db(self, quiz_data: str):
         """
         Saves the generated quiz questions and options into the database.
 
@@ -64,6 +62,7 @@ class QuizGenerate(BaseModel):
             quiz_json (str): The JSON string containing the quiz details.
             quiz_id (int): The ID of the quiz to associate the questions with.
         """
+        quiz_id = Quizzes.nextId()
         quiz_data = json.loads(quiz_data)
         question_count = quiz_data.get("question_count", 0)
         questions = quiz_data.get("questions", [])
@@ -123,4 +122,4 @@ class QuizGenerate(BaseModel):
         """
         output = self.send_message(self.input_data, self.attachments)
         self.update_history(self.input_data, output, self.attachments)
-        return self.save_quiz_to_db(output, quiz_id=len(output) + 1)
+        return self.save_quiz_to_db(output)

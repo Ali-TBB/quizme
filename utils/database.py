@@ -47,7 +47,10 @@ class Database:
     @classmethod
     def close(cls):
         if cls.__connection:
-            cls.__connection.close()
+            try:
+                cls.__connection.close()
+            except Exception as e:
+                print("Error closing database connection", e)
             cls.__connection = None
             print("Database connection closed")
 
