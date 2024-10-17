@@ -1,76 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Generator</title>
-    <script>
-        async function generateQuiz(event) {
-            event.preventDefault(); // Prevent form from submitting normally
-
-            // Get form data
-            const formData = new FormData(document.getElementById('quizForm'));
-
-            try {
-                // Send the data to the Flask API using fetch
-                const response = await fetch('http://127.0.0.1:5000/generate_quiz', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                // Parse the JSON response
-                const result = await response.json();
-
-                // Display the result
-                if (response.status === 201) {
-                    document.getElementById('result').textContent = JSON.stringify(result.quiz, null, 2);
-                } else {
-                    document.getElementById('result').textContent = `Error: ${result.error || result.message}`;
-                }
-            } catch (error) {
-                document.getElementById('result').textContent = `Error: ${error.message}`;
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Generator</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
 </head>
 <body>
-    <h1>AI-Powered Quiz Generator</h1>
+  <div class="container">
+    <h1>Quiz Generator</h1>
 
-    <form id="quizForm" onsubmit="generateQuiz(event)">
-        <label for="difficulty">Difficulty Level:</label>
-        <select id="difficulty" name="difficulty" required>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-        </select>
-        <br><br>
+    <div class="header" id="get-started-header">
+      <h2>Get Started</h2>
+    </div>
 
-        <label for="number_of_questions">Number of Questions:</label>
-        <input type="number" id="number_of_questions" name="number_of_questions" min="1" required>
-        <br><br>
+    <div class="header hide" id="quiz-header">
+      <p class="bold text-center">
+        Quiz ID: <span id="quiz-id-val" class="regular">The quiz id</span><br>
+        Quiz Topic: <span id="quiz-topic-val" class="regular">The quiz topic</span><br>
+        Quiz Type: <span id="quiz-type-val" class="regular">The quiz type</span><br>
+        Quiz Difficulty: <span id="quiz-difficulty-val" class="regular">The quiz difficulty</span><br>
+        Quiz Questions Number: <span id="quiz-questions-number-val" class="regular">The quiz questions number</span>
+      </p>
+    </div>
 
-        <label for="question_type">Question Type:</label>
-        <select id="question_type" name="question_type" required>
-            <option value="true/false">True/False</option>
-            <option value="multiple-choice one-answer">Multiple-Choice (One Answer)</option>
-            <option value="multiple-choice multiple-answer">Multiple-Choice (Multiple Answers)</option>
+    <hr>
+
+    <div class="loading">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <div class="content hide">
+      <div class="body" id="get-started-body">
+        <div class="form-group">
+          <label for="quiz-topic">Quiz Topic:</label>
+          <input type="text" class="form-control" id="quiz-topic" name="topic" aria-describedby="quiz-topic-feedback" required>
+          <div id="quiz-topic-feedback" class="invalid-feedback">
+            Please provide a valid topic.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="quiz-attachment">Quiz Attachment:</label>
+          <input class="form-control" type="file" name="attachment" id="quiz-attachment">
+          <div id="quiz-attachment-feedback" class="invalid-feedback">
+            Please provide a valid attachment.
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="quiz-difficulty">Difficulty:</label>
+          <div id="quiz-difficulty">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="difficulty" id="def-easy" value="easy">
+              <label class="form-check-label" for="def-easy">
+                Easy
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="difficulty" id="def-medium" value="medium" checked>
+              <label class="form-check-label" for="def-medium">
+                Medium
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="difficulty" id="def-hard" value="hard">
+              <label class="form-check-label" for="def-hard">
+                Hard
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="difficulty" id="def-mixed" value="mixed">
+              <label class="form-check-label" for="def-mixed">
+                Mixed
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- quiz type -->
+        <div class="form-group">
+          <label for="quiz-type">Quiz Type:</label>
+          <select name="type" id="quiz-type" class="form-control">
+            <option value="true/false">True / False</option>
+            <option value="multiple-choice one-answer">Choice</option>
+            <option value="multiple-choice multiple-answers">Multi choices</option>
             <option value="mixed">Mixed</option>
-        </select>
-        <br><br>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="quiz-questions-number">Number of Questions:</label>
+          <input type="number" class="form-control" id="quiz-questions-number" name="questions_number" aria-describedby="quiz-questions-number-feedback" required>
+          <div id="quiz-questions-number-feedback" class="invalid-feedback">
+            Please provide a valid number of questions.
+          </div>
+        </div>
+      </div>
 
-        <label for="topic_content">Topic Content:</label>
-        <input type="text" id="topic_content" name="topic_content">
-        <br><br>
+      <div class="body hide" id="quiz-body">
+        <div class="question" id="question-1">
+          <h3 class="bold">Question 1: <span class="regular">The question content</span></h3>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer-1" id="answer-1-1" value="true">
+            <label class="form-check-label" for="answer-1-1">
+              <span id="answer-1-1-content" class="regular">The answer content</span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="answer-1" id="answer-1-2" value="false">
+            <label class="form-check-label" for="answer-1-2">
+              <span id="answer-1-2-content" class="regular">The answer content</span>
+            </label>
+          </div>
+        </div>
+      </div>
 
-        <label for="file">Upload File:</label>
-        <input type="file" id="file" name="file">
-        <br><br>
+      <div class="body hide" id="score-body">
+      </div>
 
-        <button type="submit">Generate Quiz</button>
-    </form>
+      <hr>
 
-    <h2>Result:</h2>
-    <pre id="result"></pre>
+      <div class="footer" id="get-started-footer">
+        <button class="btn btn-success" data-action="get_started">Start Quiz</button>
+      </div>
+
+      <div class="footer hide" id="quiz-footer">
+        <div class="step-btns">
+          <button class="btn btn-danger hide" data-action="prev">Previews</button>
+          <button class="btn btn-primary" data-action="next">Next</button>
+          <button class="btn btn-success hide" data-action="submit">Submit</button>
+        </div>
+      </div>
+
+      <div class="footer hide" id="score-footer">
+        <button class="btn btn-success" data-action="regenerate">Start Another Quiz</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='script.js')}}"></script>
 
 </body>
 </html>
