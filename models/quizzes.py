@@ -8,12 +8,7 @@ class Quizzes(Collection):
     table = "quizzes"
 
     def __init__(
-        self, id: int,
-        topic: str,
-        difficulty: str,
-        created_at=None,
-        updated_at=None,
-        number_of_questions: int = 0
+        self, id: int, topic: str, difficulty: str, number_of_questions: int = 0, created_at=None, updated_at=None
     ):
         super().__init__(
             {
@@ -26,12 +21,12 @@ class Quizzes(Collection):
             },
         )
     @property
-    def topic_name(self) -> str:
-        return self.get("topic_name")
+    def topic(self) -> str:
+        return self.get("topic")
 
-    @topic_name.setter
-    def topic_name(self, value):
-        self.set("topic_name", value)
+    @topic.setter
+    def topic(self, value):
+        self.set("topic", value)
 
     @property
     def difficulty(self) -> str:
@@ -49,3 +44,10 @@ class Quizzes(Collection):
     def number_of_questions(self, value: int):
         self.set("number_of_questions", value)
 
+    from models.questions import Questions
+
+    @property
+    def questions(self) -> list[Questions]:
+        from models.questions import Questions
+
+        return Questions.all(where="quiz_id = ?", params=(self.id,))

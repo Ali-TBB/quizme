@@ -1,6 +1,7 @@
 import json
 
 
+from models.options import Options
 from utils.collection import Collection
 
 class Questions(Collection):
@@ -99,3 +100,7 @@ class Questions(Collection):
     @difficulty.setter
     def difficulty(self, value: str):
         self.set("difficulty", value)
+
+    @property
+    def options(self):
+        return Options.all(where="question_id = ?", params=(self.id,))
