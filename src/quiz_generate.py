@@ -16,7 +16,7 @@ class QuizGenerate(BaseModel):
     backup_name = "quiz_train"
     data_type = QuizGenerateDataType
 
-    def __init__(self, number_of_questions: int, topic_content: str = None, attachments: list = None):
+    def __init__(self, difficulty: str, number_of_questions: int, question_type: str, topic_content: str = None, attachments: list = None):
         """
         Initializes a new instance for generating quizzes.
 
@@ -28,7 +28,9 @@ class QuizGenerate(BaseModel):
             attachments (list, optional): A list of attachments related to the topic. Defaults to None.
         """
         super().__init__(dataset=Dataset.find(1))
+        self.difficulty = difficulty
         self.number_of_questions = number_of_questions
+        self.question_type = question_type
         self.topic_content = topic_content
         self.attachments = attachments if attachments is not None else []
 
@@ -46,9 +48,11 @@ class QuizGenerate(BaseModel):
         self.input_data = (
             f"Please generate a quiz based on the following criteria:\n"
             f"- {topic_info}\n"
+            f"- Difficulty Level: {self.difficulty}\n"
             f"- Number of Questions: {self.number_of_questions}\n"
+            f"- Question Type: {self.question_type}"
             f"The quiz should include a variety of questions that align with the specified difficulty level."
-            f"{attachment_info}\n"
+            f"{attachment_info}"
         )
 
         
@@ -67,6 +71,7 @@ class QuizGenerate(BaseModel):
         for question_data in questions:
             # Extract question details
             content = question_data.get("question", "")
+            difficulty = question_data.get("difficulty", "easy")
             options_list = question_data.get("options", [])
             correct_answers = question_data.get("corrected_answer", [])
 
@@ -74,6 +79,8 @@ class QuizGenerate(BaseModel):
             question = Questions.create(
                 id=None,  # ID will be auto-generated
                 quiz_id=quiz_id,
+                question_type="multiple-answer" if len(correct_answers) > 1 else "one-answer",
+                difficulty=difficulty,
                 content=content,
                 options_ids="",  # Will be populated later
                 correct_option_id=None,  # Will be set after creating options
@@ -104,6 +111,7 @@ class QuizGenerate(BaseModel):
         quiz = Quizzes.create(
             id = quiz_id,
             topic=self.topic_content,
+            difficulty=self.difficulty,
             number_of_questions = self.number_of_questions
         )
         print(f"Successfully saved {question_count} questions and their options to the database.")
