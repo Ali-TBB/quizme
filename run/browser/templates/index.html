@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Generator</title>
+    <script>
+        async function generateQuiz(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+
+            // Get form data
+            const formData = new FormData(document.getElementById('quizForm'));
+
+            try {
+                // Send the data to the Flask API using fetch
+                const response = await fetch('http://127.0.0.1:5000/generate_quiz', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Parse the JSON response
+                const result = await response.json();
+
+                // Display the result
+                if (response.status === 201) {
+                    document.getElementById('result').textContent = JSON.stringify(result.quiz, null, 2);
+                } else {
+                    document.getElementById('result').textContent = `Error: ${result.error || result.message}`;
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>AI-Powered Quiz Generator</h1>
+
+    <form id="quizForm" onsubmit="generateQuiz(event)">
+        <label for="difficulty">Difficulty Level:</label>
+        <select id="difficulty" name="difficulty" required>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <br><br>
+
+        <label for="number_of_questions">Number of Questions:</label>
+        <input type="number" id="number_of_questions" name="number_of_questions" min="1" required>
+        <br><br>
+
+        <label for="question_type">Question Type:</label>
+        <select id="question_type" name="question_type" required>
+            <option value="true/false">True/False</option>
+            <option value="multiple-choice one-answer">Multiple-Choice (One Answer)</option>
+            <option value="multiple-choice multiple-answer">Multiple-Choice (Multiple Answers)</option>
+            <option value="mixed">Mixed</option>
+        </select>
+        <br><br>
+
+        <label for="topic_content">Topic Content:</label>
+        <input type="text" id="topic_content" name="topic_content">
+        <br><br>
+
+        <label for="file">Upload File:</label>
+        <input type="file" id="file" name="file">
+        <br><br>
+
+        <button type="submit">Generate Quiz</button>
+    </form>
+
+    <h2>Result:</h2>
+    <pre id="result"></pre>
+
+</body>
+</html>
