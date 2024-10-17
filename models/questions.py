@@ -10,6 +10,8 @@ class Questions(Collection):
     def __init__(
         self, id: int,
         quiz_id: int,
+        question_type: str,
+        difficulty: str,
         content:str,
         options_ids: str,
         correct_option_id: int,
@@ -21,6 +23,8 @@ class Questions(Collection):
                 "id": id,
                 "quiz_id": quiz_id,
                 "content": content,
+                "question_type": question_type,
+                "difficulty": difficulty,
                 "options_ids": options_ids,
                 "correct_option_id": correct_option_id,
                 "created_at": created_at,

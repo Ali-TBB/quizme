@@ -8,12 +8,18 @@ class Quizzes(Collection):
     table = "quizzes"
 
     def __init__(
-        self, id: int, topic: str, created_at=None, updated_at=None, number_of_questions: int = 0
+        self, id: int,
+        topic: str,
+        difficulty: str,
+        created_at=None,
+        updated_at=None,
+        number_of_questions: int = 0
     ):
         super().__init__(
             {
             "id": id,
             "topic": topic,
+            "difficulty": difficulty,
             "number_of_questions": number_of_questions,
             "created_at": created_at,
             "updated_at": updated_at,
