@@ -53,3 +53,13 @@ CREATE TABLE IF NOT EXISTS `options` (
   `updated_at` TIMESTAMP,
   FOREIGN KEY (`question_id`) REFERENCES questions(`id`) ON DELETE CASCADE
 );
+CREATE TABLE IF NOT EXISTS `answers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `question_id` INT NOT NULL,
+  `quiz_id` INT NOT NULL,
+  `answer_ids` TEXT, 
+  `correct_ids` TEXT,
+  `created_at` TIMESTAMP,
+  `updated_at` TIMESTAMP,
+  FOREIGN KEY (`question_id`) REFERENCES questions(`id`) ON DELETE CASCADE
+);
