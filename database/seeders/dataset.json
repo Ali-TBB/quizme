@@ -1,0 +1,9 @@
+{
+  "table": "datasets",
+  "items": [
+      {
+          "id": 1,
+          "name": "quiz_train"
+      }
+  ]
+}
