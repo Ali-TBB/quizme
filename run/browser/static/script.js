@@ -23,7 +23,7 @@ async function generateQuiz() {
 
   let valid = true;
 
-  if (!quizTopic || quizTopic === '') {
+  if (!quizAttachment && (!quizTopic || quizTopic === '')) {
     $('#quiz-topic').addClass('is-invalid');
     $('#quiz-topic-feedback').text('Please enter a topic');
     valid = false;
@@ -64,7 +64,7 @@ async function generateQuiz() {
   formData.append('difficulty', quizDifficulty);
   formData.append('question_type', quizType);
   formData.append('number_of_questions', quizQuestionsNumber);
-  if (quizAttachment) formData.append('attachment', $('#quiz-attachment')[0].files)
+  if (quizAttachment) formData.append('file', $('#quiz-attachment')[0].files[0]);
 
   try {
     const response = await $.post({
