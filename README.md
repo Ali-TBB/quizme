@@ -13,7 +13,7 @@ To get started with QuizMe AI, follow these steps:
    Clone the repository to your local machine:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Ali-TBB/QuizMe
    cd QuizMe
    ```
 
